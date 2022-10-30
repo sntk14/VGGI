@@ -88,11 +88,16 @@ function draw() {
 
 function CreateSurfaceData()
 {
+    const wall = 1.2
+    const height = 1
+
     let vertexList = [];
 
-    for (let i=0; i<360; i+=5) {
-        vertexList.push( Math.sin(deg2rad(i)), 1, Math.cos(deg2rad(i)) );
+    for (let i=0; i<=360; i+=5) {
         vertexList.push( Math.sin(deg2rad(i)), 0, Math.cos(deg2rad(i)) );
+        vertexList.push( Math.sin(deg2rad(i)), height, Math.cos(deg2rad(i)) );
+        vertexList.push( Math.sin(deg2rad(i)) * wall, height, Math.cos(deg2rad(i)) * wall);
+        vertexList.push( Math.sin(deg2rad(i)) * wall, 0, Math.cos(deg2rad(i)) * wall);
     }
 
     return vertexList;

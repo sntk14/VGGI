@@ -16,7 +16,6 @@ function deg2rad(angle) {
 function Model(name) {
     this.name = name;
     this.iVertexBuffer = gl.createBuffer();
-    this.count = 0;
     this.vertices;
 
     this.BufferData = function(vertices) {
@@ -24,7 +23,6 @@ function Model(name) {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.iVertexBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STREAM_DRAW);
 
-        this.count = vertices.length/3;
         this.vertices = vertices;
     }
 
@@ -92,7 +90,7 @@ function draw() {
     gl.uniformMatrix4fv(shProgram.iModelViewProjectionMatrix, false, modelViewProjection );
 
     /* Draw the six faces of a cube, with different colors. */
-    gl.uniform4fv(shProgram.iColor, [1,0,1,1] );
+    gl.uniform4fv(shProgram.iColor, [0,1,1,1] );
 
     surface.Draw();
 }
@@ -190,6 +188,7 @@ function init() {
     try {
         canvas = document.getElementById("webglcanvas");
         gl = canvas.getContext("webgl");
+        initGL();  // initialize the WebGL graphics context
         if ( ! gl ) {
             throw "Browser does not support WebGL";
         }
@@ -199,15 +198,6 @@ function init() {
             "<p>Sorry, could not get a WebGL graphics context.</p>";
         return;
     }
-    try {
-        initGL();  // initialize the WebGL graphics context
-    }
-    catch (e) {
-        document.getElementById("canvas-holder").innerHTML =
-            "<p>Sorry, could not initialize the WebGL graphics context: " + e + "</p>";
-        return;
-    }
-
     spaceball = new TrackballRotator(canvas, draw, 0);
 
     draw();

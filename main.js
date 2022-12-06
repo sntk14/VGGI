@@ -220,6 +220,8 @@ function createProgram(gl, vShader, fShader) {
  * initialization function that will be called when the page has loaded
  */
 function init() {
+    lightPositionEl = document.getElementById('lightSettings');
+
     let canvas;
     try {
         canvas = document.getElementById("webglcanvas");
@@ -242,5 +244,10 @@ function init() {
 
     spaceball = new TrackballRotator(canvas, draw, 0);
 
+    draw();
+}
+
+function update() {
+    surface.BufferData(CreateSurfaceData());
     draw();
 }

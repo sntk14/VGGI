@@ -2,7 +2,7 @@
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 
-<title>PA#1</title>
+<title>PA#2</title>
 <style>
     body {
         background-color: #EEEEEE;
@@ -18,6 +18,17 @@
 <body onload="init()">
 
 <h2>25 Oleksandr Snytko</h2>
+
+<div id="lightSettings">
+      <label for="lightSettingsX">X:</label>
+      <input id="lightSettingsX" type="range" min="-15" max="15" step="1" onchange="update()"/>
+
+      <label for="lightSettingsY">Y:</label>
+      <input id="lightSettingsY" type="range" min="-15" max="15" step="1" onchange="update()"/>
+
+      <label for="lightSettingsZ">Z:</label>
+      <input id="lightSettingsZ" type="range" min="-15" max="15" step="1" onchange="update()"/>
+</div>
 
 <div id="canvas-holder">
    <canvas width="600" height="600" id="webglcanvas" style="background-color:red"></canvas>

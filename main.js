@@ -28,10 +28,10 @@ function Model(name) {
     this.Draw = function () {
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.iVertexBuffer);
-        gl.vertexAttribPointer(shProgram.iAttribVertex, 3, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(shProgram.iAttribVertex, 3, gl.FLOAT, true, 0, 0);
         gl.enableVertexAttribArray(shProgram.iAttribVertex);
 
-        gl.vertexAttribPointer(shProgram.iNormal, 3, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(shProgram.iNormal, 3, gl.FLOAT, true, 0, 0);
         gl.enableVertexAttribArray(shProgram.iNormal);
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.count);
@@ -56,10 +56,7 @@ function ShaderProgram(name, program) {
     this.iNormal = -1;
     this.iNormalMatrix = -1;
 
-    // Ambient, diffuse, specular
-    this.iAmbientColor = -1;
-    this.iDiffuseColor = -1;
-    this.iSpecularColor = -1;
+    this.iLightColor = -1;
 
     // Shininess
     this.iShininess = -1;
@@ -112,7 +109,7 @@ function draw() {
     gl.uniform1f(shProgram.iShininess, 1.0);
 
     gl.uniform3fv(shProgram.iAmbientColor, [0, 0, 0.5]);
-    gl.uniform3fv(shProgram.iDiffuseColor, [0, 1, 1]);
+    gl.uniform3fv(shProgram.iLightColor, [0, 1, 1]);
     gl.uniform4fv(shProgram.iSpecularColor, [1, 0, 0, 1]);
 
     /* Draw the six faces of a cube, with different colors. */
@@ -170,9 +167,7 @@ function initGL() {
     shProgram.iColor = gl.getUniformLocation(prog, "color");
     shProgram.iNormal = gl.getAttribLocation(prog, 'normal');
     shProgram.iNormalMatrix = gl.getUniformLocation(prog, 'normalMat');
-    shProgram.iAmbientColor = gl.getUniformLocation(prog, 'ambientColor');
-    shProgram.iDiffuseColor = gl.getUniformLocation(prog, 'diffuseColor');
-    shProgram.iSpecularColor = gl.getUniformLocation(prog, 'specularColor');
+    shProgram.iLightColor = gl.getUniformLocation(prog, 'lightColor');
     shProgram.iShininess = gl.getUniformLocation(prog, 'shininess');
     shProgram.iLightPos = gl.getUniformLocation(prog, 'lightPosition');
     shProgram.iLightVec = gl.getUniformLocation(prog, 'lightVec');

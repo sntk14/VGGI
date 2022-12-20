@@ -109,7 +109,7 @@ function draw() {
     gl.uniform1f(shProgram.iShininess, 1.0);
 
     gl.uniform3fv(shProgram.iAmbientColor, [0, 0, 0.5]);
-    gl.uniform3fv(shProgram.iLightColor, [0, 1, 1]);
+    gl.uniform4fv(shProgram.iLightColor, [0, 1, 1, 1]);
     gl.uniform4fv(shProgram.iSpecularColor, [1, 0, 0, 1]);
 
     /* Draw the six faces of a cube, with different colors. */

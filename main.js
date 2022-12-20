@@ -65,6 +65,8 @@ function ShaderProgram(name, program) {
     this.iLightPos = -1;
     this.iLightVec = -1;
 
+    this.iWorldLocation = -1;
+
     this.Use = function () {
         gl.useProgram(this.prog);
     }
@@ -102,6 +104,7 @@ function draw() {
 
     gl.uniformMatrix4fv(shProgram.iNormalMatrix, false, normalMatrix);
 
+    gl.uniformMatrix4fv(shProgram.iWorldLocation, false, modelViewProjection);
     const lightPos = Array.from(lightPositionEl.getElementsByTagName('input')).map(el => +el.value);
     gl.uniform3fv(shProgram.iLightPos, lightPos);
     gl.uniform3fv(shProgram.iLightVec, new Float32Array(3));
@@ -171,7 +174,7 @@ function initGL() {
     shProgram.iShininess = gl.getUniformLocation(prog, 'shininess');
     shProgram.iLightPos = gl.getUniformLocation(prog, 'lightPosition');
     shProgram.iLightVec = gl.getUniformLocation(prog, 'lightVec');
-
+    shProgram.iWorldLocation = gl.getUniformLocation(prog, "world");
     surface = new Model('Surface');
     surface.BufferData(CreateSurfaceData());
 

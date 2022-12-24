@@ -119,39 +119,42 @@ function draw() {
 }
 
 function CreateSurfaceData() {
-    let vertexList = [];
+    let vertices = [];
+    let uvs = [];
 
     const l = 1;
-    const r1 = 0.3;
+    const r1 = -1;
     const r2 = 2;
 
-    for (let b = 0; b <= 360; b += 5) {
-        for (let z = 0; z <= 2 * l; z += 0.2) {
-            let r = (((r2 - r1)) * (1 - Math.cos(deg2rad((Math.PI * z) / (2 * l))))) * 100 + r1;
+    function normUv(b, z) {
+        return [b / 360, z / (2 * l)];
+    }
 
-            let x = r * Math.cos(deg2rad(b));
-            let y = r * Math.sin(deg2rad(b));
-            vertexList.push(x, y, z);
+    function r(a, b) {
+        a = deg2rad(a);
+        b = deg2rad(b);
+        return (r2 - r1) * Math.pow(Math.sin((Math.PI * a) / (4 * a)), 2) + r1;
+    }
 
-            x = r * Math.cos(deg2rad(b + 10));
-            y = r * Math.sin(deg2rad(b + 10));
-            vertexList.push(x, y, z);
-        }
+    for (let b = 0; b <= 360; b += 1) {
+        for (let a = 0; a <= 2 * l; a += 0.1) {
+            const x = r(a, b) * Math.cos(deg2rad(b));
+            const y = r(a, b) * Math.sin(deg2rad(b));
+            const z = a;
+            vertices.push(x, y, z);
+            uvs.push(...normUv(b, a));
 
-        for (let z = 2 * l; z >= 0; z -= 0.2) {
-            let r = (((r2 - r1)) * (1 - Math.cos(deg2rad((Math.PI * z) / (2 * l))))) * 100 + r1;
-
-            let x = r * Math.cos(deg2rad(b));
-            let y = r * Math.sin(deg2rad(b));
-            vertexList.push(x, y, z);
-
-            x = r * Math.cos(deg2rad(b + 10));
-            y = r * Math.sin(deg2rad(b + 10));
-            vertexList.push(x, y, z);
+            const a1 = a + 0.2;
+            const b1 = b + 5;
+            const x1 = r(a1, b1) * Math.cos(deg2rad(b1));
+            const y1 = r(a1, b1) * Math.sin(deg2rad(b1));
+            const z1 = a1;
+            vertices.push(x1, y1, z1);
+            uvs.push(...normUv(b1, a1));
         }
     }
 
-    return vertexList;
+    return {vertices, uvs};
 }
 
 
@@ -163,6 +166,7 @@ function initGL() {
     shProgram.Use();
 
     shProgram.iAttribVertex              = gl.getAttribLocation(prog, "vertex");
+    shProgram.iTexCoord              = gl.getAttribLocation(prog, "texCoord");
     shProgram.iModelViewProjectionMatrix = gl.getUniformLocation(prog, "ModelViewProjectionMatrix");
     shProgram.iColor = gl.getUniformLocation(prog, "color");
     shProgram.iNormal = gl.getAttribLocation(prog, 'normal');
@@ -171,9 +175,11 @@ function initGL() {
     shProgram.iShininess = gl.getUniformLocation(prog, 'shininess');
     shProgram.iLightPos = gl.getUniformLocation(prog, 'lightPosition');
     shProgram.iLightVec = gl.getUniformLocation(prog, 'lightVec');
+    shProgram.iLightVec = gl.getUniformLocation(prog, 'lightVec');
 
     surface = new Model('Surface');
-    surface.BufferData(CreateSurfaceData());
+    const {vertices, uvs} = CreateSurfaceData();
+    surface.BufferData(vertices, uvs);
 
     gl.enable(gl.DEPTH_TEST);
 }
@@ -239,10 +245,27 @@ function init() {
 
     spaceball = new TrackballRotator(canvas, draw, 0);
 
+  
+    const image = new Image();
+    image.src = "https://www.the3rdsequence.com/texturedb/download/258/texture/jpg/1024/yellow+bananas-1024x1024.jpg";
+    image.crossOrigin = "anonymous";
+    image.onload = () => {
+        document.body.appendChild(image);
+        setTexture(gl, image);
+        draw();
+    }
+
     draw();
 }
 
+function setTexture(gl, image) {
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+}
+
 function update() {
-    surface.BufferData(CreateSurfaceData());
     draw();
 }

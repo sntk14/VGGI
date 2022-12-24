@@ -122,31 +122,30 @@ function CreateSurfaceData() {
     let uvs = [];
 
     const l = 1;
-    const r1 = -1;
-    const r2 = 2;
+    const r1 = 0.5;
+    const r2 = 4;
 
     function normUv(b, z) {
         return [b / 360, z / (2 * l)];
     }
 
-    function r(a, b) {
+    function r(a) {
         a = deg2rad(a);
-        b = deg2rad(b);
-        return (r2 - r1) * Math.pow(Math.sin((Math.PI * a) / (4 * a)), 2) + r1;
+        return (r2 - r1) * Math.pow(Math.sin((Math.PI * a) / (4 * l)), 2) * 100 + r1;
     }
 
     for (let b = 0; b <= 360; b += 1) {
         for (let a = 0; a <= 2 * l; a += 0.1) {
-            const x = r(a, b) * Math.cos(deg2rad(b));
-            const y = r(a, b) * Math.sin(deg2rad(b));
+            const x = r(a) * Math.cos(deg2rad(b));
+            const y = r(a) * Math.sin(deg2rad(b));
             const z = a;
             vertices.push(x, y, z);
             uvs.push(...normUv(b, a));
 
             const a1 = a + 0.2;
             const b1 = b + 5;
-            const x1 = r(a1, b1) * Math.cos(deg2rad(b1));
-            const y1 = r(a1, b1) * Math.sin(deg2rad(b1));
+            const x1 = r(a1) * Math.cos(deg2rad(b1));
+            const y1 = r(a1) * Math.sin(deg2rad(b1));
             const z1 = a1;
             vertices.push(x1, y1, z1);
             uvs.push(...normUv(b1, a1));

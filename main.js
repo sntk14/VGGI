@@ -174,7 +174,7 @@ function initGL() {
     shProgram.iShininess = gl.getUniformLocation(prog, 'shininess');
     shProgram.iLightPos = gl.getUniformLocation(prog, 'lightPosition');
     shProgram.iLightVec = gl.getUniformLocation(prog, 'lightVec');
-    shProgram.iLightVec = gl.getUniformLocation(prog, 'lightVec');
+    shProgram.iTexScale = gl.getUniformLocation(prog, 'texScale');
 
     surface = new Model('Surface');
     const {vertices, uvs} = CreateSurfaceData();
@@ -244,12 +244,23 @@ function init() {
 
     spaceball = new TrackballRotator(canvas, draw, 0);
 
+    gl.uniform2fv(shProgram.iTexScale, [1, 1]);
+    const scaleUInput = document.getElementById("scaleU");
+    const scaleVInput = document.getElementById("scaleV");
+    const scale = () => {
+        const scaleU = parseFloat(scaleUInput.value);
+        const scaleV = parseFloat(scaleVInput.value);
+        gl.uniform2fv(shProgram.iTexScale, [scaleU, scaleV]);
+        draw();
+    };
+    scaleUInput.addEventListener("input", scale);
+    scaleVInput.addEventListener("input", scale);
+
   
     const image = new Image();
     image.src = "https://www.the3rdsequence.com/texturedb/download/248/texture/jpg/1024/old+dirty+white+wood+planks-1024x1024.jpg";
     image.crossOrigin = "anonymous";
     image.onload = () => {
-        document.body.appendChild(image);
         setTexture(gl, image);
         draw();
     }

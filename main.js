@@ -14,26 +14,25 @@ function deg2rad(angle) {
 // Constructor
 function Model(name) {
     this.name = name;
-    this.iVertexBuffer = gl.createBuffer();
     this.count = 0;
 
-    this.BufferData = function (vertices) {
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.iVertexBuffer);
+    this.BufferData = function (vertices, uvs) {
+        const vBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STREAM_DRAW);
+        gl.enableVertexAttribArray(shProgram.iAttribVertex);
+        gl.vertexAttribPointer(shProgram.iAttribVertex, 3, gl.FLOAT, false, 0, 0);
+
+        const tBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, tBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uvs), gl.STREAM_DRAW);
+        gl.enableVertexAttribArray(shProgram.iTexCoord);
+        gl.vertexAttribPointer(shProgram.iTexCoord, 2, gl.FLOAT, false, 0, 0);
 
         this.count = vertices.length / 3;
     }
 
     this.Draw = function () {
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.iVertexBuffer);
-        gl.vertexAttribPointer(shProgram.iAttribVertex, 3, gl.FLOAT, true, 0, 0);
-        gl.enableVertexAttribArray(shProgram.iAttribVertex);
-
-        gl.vertexAttribPointer(shProgram.iNormal, 3, gl.FLOAT, true, 0, 0);
-        gl.enableVertexAttribArray(shProgram.iNormal);
-
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.count);
     }
 }
@@ -166,7 +165,7 @@ function initGL() {
     shProgram.Use();
 
     shProgram.iAttribVertex              = gl.getAttribLocation(prog, "vertex");
-    shProgram.iTexCoord              = gl.getAttribLocation(prog, "texCoord");
+    shProgram.iTexCoord                  = gl.getAttribLocation(prog, "texcoord");
     shProgram.iModelViewProjectionMatrix = gl.getUniformLocation(prog, "ModelViewProjectionMatrix");
     shProgram.iColor = gl.getUniformLocation(prog, "color");
     shProgram.iNormal = gl.getAttribLocation(prog, 'normal');
@@ -247,7 +246,7 @@ function init() {
 
   
     const image = new Image();
-    image.src = "https://www.the3rdsequence.com/texturedb/download/258/texture/jpg/1024/yellow+bananas-1024x1024.jpg";
+    image.src = "https://www.the3rdsequence.com/texturedb/download/248/texture/jpg/1024/old+dirty+white+wood+planks-1024x1024.jpg";
     image.crossOrigin = "anonymous";
     image.onload = () => {
         document.body.appendChild(image);

@@ -175,6 +175,7 @@ function initGL() {
     shProgram.iLightPos = gl.getUniformLocation(prog, 'lightPosition');
     shProgram.iLightVec = gl.getUniformLocation(prog, 'lightVec');
     shProgram.iTexScale = gl.getUniformLocation(prog, 'texScale');
+    shProgram.iTexCenter = gl.getUniformLocation(prog, 'texCenter');
 
     surface = new Model('Surface');
     const {vertices, uvs} = CreateSurfaceData();
@@ -245,16 +246,27 @@ function init() {
     spaceball = new TrackballRotator(canvas, draw, 0);
 
     gl.uniform2fv(shProgram.iTexScale, [1, 1]);
+    gl.uniform2fv(shProgram.iTexCenter, [0, 0]);
     const scaleUInput = document.getElementById("scaleU");
     const scaleVInput = document.getElementById("scaleV");
+    const centerUInput = document.getElementById("centerU");
+    const centerVInput = document.getElementById("centerV");
     const scale = () => {
         const scaleU = parseFloat(scaleUInput.value);
         const scaleV = parseFloat(scaleVInput.value);
         gl.uniform2fv(shProgram.iTexScale, [scaleU, scaleV]);
         draw();
     };
+    const center = () => {
+        const centerU = parseFloat(centerUInput.value);
+        const centerV = parseFloat(centerVInput.value);
+        gl.uniform2fv(shProgram.iTexCenter, [centerU, centerV]);
+        draw();
+    };
     scaleUInput.addEventListener("input", scale);
     scaleVInput.addEventListener("input", scale);
+    centerUInput.addEventListener("input", center);
+    centerVInput.addEventListener("input", center);
 
   
     const image = new Image();

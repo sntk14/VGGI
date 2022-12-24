@@ -9,6 +9,7 @@ uniform float shininess;
 uniform vec3 lightColor;
 uniform vec3 lightPosition;
 uniform vec2 texScale;
+uniform vec2 texCenter;
 
 varying vec2 vTexcoord;
 varying vec4 color;
@@ -38,11 +39,11 @@ vec2 scaleWithPoint(vec2 point, vec2 pivot, vec2 scale) {
 
     vec4 point4 = vec4(point, 0., 0.);
 
-    // vec4 tr = tran * point4;
-    vec4 sc = point4 * scaleMat;
-    // vec4 trb = tr * tranBack;
+    vec4 tr = tran * point4;
+    vec4 sc = tr * scaleMat;
+    vec4 trb = sc * tranBack;
 
-    return vec2(sc);
+    return vec2(trb);
 }
 
 
@@ -70,11 +71,7 @@ void main() {
 
     color = vec4(diffuse + ambient + specular, 1.0);
 
-
-
-    vec2 point = vec2(1., 1.);
-
-    vTexcoord = scaleWithPoint(texcoord, point, texScale);
+    vTexcoord = scaleWithPoint(texcoord, texCenter, texScale);
 }`;
 
 

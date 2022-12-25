@@ -1,27 +1,35 @@
-
-
 // Vertex shader
 const vertexShaderSource = `
 attribute vec3 vertex;
 attribute vec3 normal;
 uniform mat4 ModelViewProjectionMatrix, normalMat;
 uniform float shininess;
-uniform vec4 lightColor;
+uniform vec3 lightColor;
 uniform vec3 lightPosition;
-uniform mat4 world;
 
-varying vec3 v_normal;
-varying vec3 light_pos;
 varying vec4 color;
-varying vec3 v_surfView;
+
+
+vec3 calc_light(vec3 lightColor, vec3 normal, vec3 lightDirection) {
+    float strength = 0.2;
+
+    float maxND = max(dot(normal, lightDirection), 0.0);
+    vec3 refD = reflect(-lightDirection, normal);
+    float sp = pow(max(dot(lightDirection, refD), 0.0), 32.);
+
+    return strength * lightColor + maxND * lightColor + strength * sp * lightColor;
+}
 
 void main() {
-    v_normal = mat3(ModelViewProjectionMatrix) * normal;
-    light_pos = lightPosition;
-    color = lightColor;
+    vec4 vertPos4 = ModelViewProjectionMatrix * vec4(vertex, 1.0);
+    vec3 vertPos = vec3(vertPos4) / vertPos4.w;
+    vec3 normal = normalize(vec3(normalMat * vec4(normal, 0.0)));
+    vec3 lightDirection = normalize(lightPosition - vertPos);
 
-    vec3 surfaceWPos = (world * vec4(vertex, 1.0)).xyz;
-    v_surfView = lightPosition - surfaceWPos;
+    vec3 calculated_light = calc_light(lightColor, normal, lightDirection);
+
+    gl_Position = vertPos4;
+    color = vec4(calculated_light, 1.);
 }`;
 
 
@@ -34,26 +42,6 @@ const fragmentShaderSource = `
 #endif
 
 varying vec4 color;
-varying vec3 v_normal;
-varying vec3 light_pos;
-varying vec3 v_surfView;
-
 void main() {
-    vec3 normal = normalize(v_normal);
-    vec3 surfLightVect = normalize(light_pos);
-    vec3 surfViewDirection = normalize(v_surfView);
-    vec3 cVector = normalize(surfLightVect + surfViewDirection);
-
-    float shininess = 5.0;
-
-    float innerLimit = cos(5.0 * 5.0 / 180.0);
-    float outerLimit = cos(10.0 * 5.0 / 180.0);
-
-    float inLight = smoothstep(outerLimit, innerLimit, surfLightVect);
-    float light = inLight * dot(normal, surfLightVect);
-    float specular = inLight * pow(dot(normal, cVector), shininess);
-
     gl_FragColor = color;
-    gl_FragColor.rgb *= light;
-    gl_FragColor.rgb += specular;
 }`;

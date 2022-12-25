@@ -107,9 +107,7 @@ function draw() {
 
     gl.uniform1f(shProgram.iShininess, 1.0);
 
-    gl.uniform3fv(shProgram.iAmbientColor, [0, 0, 0.5]);
     gl.uniform3fv(shProgram.iLightColor, [0, 1, 1]);
-    gl.uniform4fv(shProgram.iSpecularColor, [1, 0, 0, 1]);
 
     /* Draw the six faces of a cube, with different colors. */
     gl.uniform4fv(shProgram.iColor, [0,1,1,1] );
@@ -136,6 +134,22 @@ function CreateSurfaceData() {
 
     for (let b = 0; b <= 360; b += 1) {
         for (let a = 0; a <= 2 * l; a += 0.1) {
+            const x = r(a) * Math.cos(deg2rad(b));
+            const y = r(a) * Math.sin(deg2rad(b));
+            const z = a;
+            vertices.push(x, y, z);
+            uvs.push(...normUv(b, a));
+
+            const a1 = a + 0.2;
+            const b1 = b + 5;
+            const x1 = r(a1) * Math.cos(deg2rad(b1));
+            const y1 = r(a1) * Math.sin(deg2rad(b1));
+            const z1 = a1;
+            vertices.push(x1, y1, z1);
+            uvs.push(...normUv(b1, a1));
+        }
+
+        for (let a = 2*l; a > 0; a -= 0.1) {
             const x = r(a) * Math.cos(deg2rad(b));
             const y = r(a) * Math.sin(deg2rad(b));
             const z = a;
@@ -250,9 +264,16 @@ function init() {
     const scaleVInput = document.getElementById("scaleV");
     const centerUInput = document.getElementById("centerU");
     const centerVInput = document.getElementById("centerV");
+
+    function setSpanValue (id, value) {
+        document.getElementById('scale_value_'+id).innerHTML = value;
+    }
     const scale = () => {
         const scaleU = parseFloat(scaleUInput.value);
         const scaleV = parseFloat(scaleVInput.value);
+
+        setSpanValue("V", scaleV)
+        setSpanValue("U", scaleU)
         gl.uniform2fv(shProgram.iTexScale, [scaleU, scaleV]);
         draw();
     };
@@ -268,25 +289,75 @@ function init() {
     centerVInput.addEventListener("input", center);
 
   
-    const image = new Image();
-    image.src = "https://www.the3rdsequence.com/texturedb/download/248/texture/jpg/1024/old+dirty+white+wood+planks-1024x1024.jpg";
-    image.crossOrigin = "anonymous";
-    image.onload = () => {
-        setTexture(gl, image);
+    const teximage = new Image();
+    teximage.crossOrigin = "anonymous";
+    teximage.src = "https://www.the3rdsequence.com/texturedb/download/248/texture/jpg/1024/old+dirty+white+wood+planks-1024x1024.jpg";
+    teximage.onload = () => {
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, teximage);
+
         draw();
     }
 
     draw();
 }
 
-function setTexture(gl, image) {
-    const texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+function validateMin(value, minValue = 0)
+{
+    return value < minValue ? minValue : value;
 }
 
-function update() {
-    draw();
+function getCurrentValue(id)
+{
+    return document.getElementById(id).value
 }
+
+function setCurrentValue(id, value)
+{
+    value = validateMin(value);
+
+    document.getElementById(id).value = value;
+    document.getElementById(id+'_span').innerHTML = value;
+}
+
+const setCenter = (centerU = false, centerV = false) => {
+    console.log(centerU, centerV)
+    gl.uniform2fv(shProgram.iTexCenter, [centerU, centerV]);
+    draw();
+};
+
+
+const Vpoint = 'centerV'
+const Upoint = 'centerU'
+
+document.onkeydown = (e) => {
+    if (e.key === "ArrowUp" || e.key === "w") {
+        setCurrentValue(
+            Vpoint,
+            parseFloat(getCurrentValue(Vpoint)) + 0.5
+        )
+    } else if (e.key === "ArrowDown" || e.key === "s") {
+        setCurrentValue(
+            Vpoint,
+            parseFloat(getCurrentValue(Vpoint)) - 0.5
+        )
+    } else if (e.key === "ArrowLeft" || e.key === "a") {
+        setCurrentValue(
+            Upoint,
+            parseFloat(getCurrentValue(Upoint)) - 0.5
+        )
+    } else if (e.key === "ArrowRight" || e.key === "d") {
+        setCurrentValue(
+            Upoint,
+            parseFloat(getCurrentValue(Upoint)) + 0.5
+        )
+    }
+
+
+    setCenter(getCurrentValue(Upoint), getCurrentValue(Vpoint))
+    console.log(getCurrentValue(Vpoint), getCurrentValue(Upoint))
+};

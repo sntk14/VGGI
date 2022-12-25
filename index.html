@@ -5,7 +5,22 @@
 <title>PA#2</title>
 <style>
     body {
-        background-color: #EEEEEE;
+        background-color: #b1fff6;
+    }
+
+    .r {
+        color: red;
+    }
+
+    .b {
+        color: blue;
+    }
+
+    .gw {
+        margin: 20px;
+        padding: 20px;
+        font-weight: bold;
+        font-size: 20px;
     }
 </style>
 
@@ -20,33 +35,20 @@
 <h2>25 Oleksandr Snytko</h2>
 
 <div id="lightSettings">
-      <label for="lightSettingsX">X:</label>
-      <input id="lightSettingsX" type="range" min="-10" max="10" step="0.5" onchange="update()"/>
+      <label for="scaleU">SCALE U (<span id="scale_value_U" class="r">1</span>)</label>
+      <input type="range" id="scaleU" name="scaleU" min="1" max="10" step="0.1" value="1">
 
-      <label for="lightSettingsY">Y:</label>
-      <input id="lightSettingsY" type="range" min="-10" max="10" step="0.5" onchange="update()"/>
-
-      <label for="lightSettingsZ">Z:</label>
-      <input id="lightSettingsZ" type="range" min="-10" max="10" step="0.5" onchange="update()"/>
+      <label for="scaleV">SCALE V (<span id="scale_value_V" class="b">1</span>)</label>
+      <input type="range" id="scaleV" name="scaleV" min="1" max="10" step="0.1" value="1">
 </div>
 
-<div>
-  <label for="scaleU">scale u</label>
-  <input type="range" id="scaleU" name="scaleU" min="1" max="10" step="0.1" value="1">
-</div>
-<div>
-  <label for="scaleV">scale v</label>
-  <input type="range" id="scaleV" name="scaleV" min="1" max="10" step="0.1" value="1">
-</div>
-<div>
-  <label for="centerU">center u</label>
-  <input type="range" id="centerU" name="centerU" min="1" max="10" step="0.1" value="1">
-</div>
-<div>
-  <label for="centerV">center v</label>
-  <input type="range" id="centerV" name="centerV" min="1" max="10" step="0.1" value="1">
-</div>
 
+<div class="gw">
+    <input type="hidden" id="centerU" name="centerU" value="0">
+    <input type="hidden" id="centerV" name="centerV" value="0">
+    <div>Press w\s to change <span class="b">V</span> and a\d to change <span class="r">U</span> </div>
+    <div>Point V:<span id="centerV_span" class="b">0</span> <span style="margin: 0 10px">|</span>U: <span id="centerU_span" class="r">0</span> </div>
+</div>
 
 <div id="canvas-holder">
    <canvas width="600" height="600" id="webglcanvas" style="background-color:red"></canvas>

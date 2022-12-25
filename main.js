@@ -65,8 +65,6 @@ function ShaderProgram(name, program) {
     this.iLightPos = -1;
     this.iLightVec = -1;
 
-    this.iWorldLocation = -1;
-
     this.Use = function () {
         gl.useProgram(this.prog);
     }
@@ -104,16 +102,13 @@ function draw() {
 
     gl.uniformMatrix4fv(shProgram.iNormalMatrix, false, normalMatrix);
 
-    gl.uniformMatrix4fv(shProgram.iWorldLocation, false, modelViewProjection);
     const lightPos = Array.from(lightPositionEl.getElementsByTagName('input')).map(el => +el.value);
     gl.uniform3fv(shProgram.iLightPos, lightPos);
     gl.uniform3fv(shProgram.iLightVec, new Float32Array(3));
 
     gl.uniform1f(shProgram.iShininess, 1.0);
 
-    gl.uniform3fv(shProgram.iAmbientColor, [0, 0, 0.5]);
-    gl.uniform4fv(shProgram.iLightColor, [0, 1, 1, 1]);
-    gl.uniform4fv(shProgram.iSpecularColor, [1, 0, 0, 1]);
+    gl.uniform3fv(shProgram.iLightColor, [0, 1, 1]);
 
     /* Draw the six faces of a cube, with different colors. */
     gl.uniform4fv(shProgram.iColor, [0,1,1,1] );
@@ -174,7 +169,7 @@ function initGL() {
     shProgram.iShininess = gl.getUniformLocation(prog, 'shininess');
     shProgram.iLightPos = gl.getUniformLocation(prog, 'lightPosition');
     shProgram.iLightVec = gl.getUniformLocation(prog, 'lightVec');
-    shProgram.iWorldLocation = gl.getUniformLocation(prog, "world");
+
     surface = new Model('Surface');
     surface.BufferData(CreateSurfaceData());
 

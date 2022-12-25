@@ -1,1 +1,1 @@
-![img3](imgs/PA2.gif "Image 3")
+![img3](imgs/CGW.png "Image CGW")

@@ -47,31 +47,27 @@ vec2 scaleWithPoint(vec2 point, vec2 pivot, vec2 scale) {
     return vec2(trb);
 }
 
+vec3 calc_light(vec3 lightColor, vec3 normal, vec3 lightDirection) {
+    float strength = 0.2;
+
+    float maxND = max(dot(normal, lightDirection), 0.0);
+    vec3 refD = reflect(-lightDirection, normal);
+    float sp = pow(max(dot(lightDirection, refD), 0.0), 32.);
+
+    return strength * lightColor + maxND * lightColor + strength * sp * lightColor;
+}
+
 
 void main() {
     vec4 vertPos4 = ModelViewProjectionMatrix * vec4(vertex, 1.0);
     vec3 vertPos = vec3(vertPos4) / vertPos4.w;
     vec3 normalInterp = vec3(normalMat * vec4(vertex, 0.0));
     gl_Position = vertPos4;
-    vec3 normal = normalize(normalInterp);
     vec3 lightDirection = normalize(lightPosition - vertPos);
 
-    //ambient
-    float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * lightColor;
+    vec3 calculated_light = calc_light(lightColor, normalize(normalInterp), lightDirection);
 
-    //diffuse
-    float diff = max(dot(normal, lightDirection), 0.0);
-    vec3 diffuse = diff * lightColor;
-
-    //specular
-    float specularStrength = 0.5;
-    vec3 reflectDir = reflect(-lightDirection, normal);
-    float spec = pow(max(dot(lightDirection, reflectDir), 0.0), 32.0);
-    vec3 specular = specularStrength * spec * lightColor;
-
-    color = vec4(diffuse + ambient + specular, 1.0);
-
+    color = vec4(calculated_light, 1.);
     vTexcoord = scaleWithPoint(texcoord, texCenter, texScale);
 }`;
 

@@ -291,7 +291,7 @@ function init() {
   
     const teximage = new Image();
     teximage.crossOrigin = "anonymous";
-    teximage.src = "https://www.the3rdsequence.com/texturedb/download/248/texture/jpg/1024/old+dirty+white+wood+planks-1024x1024.jpg";
+    teximage.src = "https://www.the3rdsequence.com/texturedb/download/236/texture/jpg/1024/rough+stone+rock-1024x1024.jpg";
     teximage.onload = () => {
         const texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
